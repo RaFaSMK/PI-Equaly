@@ -1,0 +1,21 @@
+# Docker
+.docker
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+
+# Logs
+*.log
+logs
+
+# Environment
+.env
+.env.local
+
+# Database volumes
+postgres_data
