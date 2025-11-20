@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Tailwind classes will be used for styling instead of custom utilities */
+/* Remove custom button styles */
+/* .btn {
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+}
+ .btn-primary {
+  background: var(--brand);
+  color: var(--brand-contrast);
+}
+ .btn-primary:hover { filter: brightness(0.95); }
+ .btn-secondary {
+  background: color-mix(in oklab, var(--brand) 10%, white);
+  color: var(--foreground);
+}
+ .btn-secondary:hover { background: color-mix(in oklab, var(--brand) 20%, white); }
+
+body {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
+ .brand-gradient {
+/* Estilização mínima; todo o visual será feito com classes Tailwind nos componentes */
+.btn-primary:hover {
+  filter: brightness(0.95);
+}

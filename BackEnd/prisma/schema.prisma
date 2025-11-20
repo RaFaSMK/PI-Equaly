@@ -1,0 +1,253 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum StatusCandidatura {
+  ENVIADA
+  ACEITA
+  REJEITADA
+}
+
+enum TipoUsuario {
+  PCD
+  EMPRESA
+  DESENVOLVEDOR
+}
+
+model TipoDeficiencia {
+  id        Int                  @id @default(autoincrement())
+  nome      String               @unique
+  subtipos  SubtipoDeficiencia[]
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}
+
+model SubtipoDeficiencia {
+  id         Int                 @id @default(autoincrement())
+  nome       String
+  tipoId     Int
+  tipo       TipoDeficiencia     @relation(fields: [tipoId], references: [id], onDelete: Cascade)
+  barreiras  SubtipoBarreira[]
+  VagaSubtipo VagaSubtipo[]
+  PcdSubtipo  PcdSubtipo[]
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  @@unique([tipoId, nome])
+}
+
+model Barreira {
+  id                Int                      @id @default(autoincrement())
+  descricao         String                   @unique
+  subtipos          SubtipoBarreira[]
+  acessibilidades   BarreiraAcessibilidade[]
+  vinculos          Vinculo[]
+  createdAt         DateTime                 @default(now())
+  updatedAt         DateTime                 @updatedAt
+}
+
+model Acessibilidade {
+  id                 Int                      @id @default(autoincrement())
+  descricao          String                   @unique
+  barreiras          BarreiraAcessibilidade[]
+  VagaAcessibilidade VagaAcessibilidade[]
+  PcdAcessibilidade  PcdAcessibilidade[]
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+}
+
+model Vinculo {
+  id         Int      @id @default(autoincrement())
+  vagaId     Int
+  barreiraId Int
+  vaga       Vaga     @relation(fields: [vagaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  barreira   Barreira @relation(fields: [barreiraId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([vagaId, barreiraId])
+  @@index([barreiraId])
+}
+
+model SubtipoBarreira {
+  subtipoId  Int
+  barreiraId Int
+  subtipo    SubtipoDeficiencia @relation(fields: [subtipoId], references: [id], onDelete: Cascade)
+  barreira   Barreira           @relation(fields: [barreiraId], references: [id], onDelete: Cascade)
+
+  @@id([subtipoId, barreiraId])
+  @@index([barreiraId])
+}
+
+model BarreiraAcessibilidade {
+  barreiraId       Int
+  acessibilidadeId Int
+  barreira         Barreira       @relation(fields: [barreiraId], references: [id], onDelete: Cascade)
+  acessibilidade   Acessibilidade @relation(fields: [acessibilidadeId], references: [id], onDelete: Cascade)
+
+  @@id([barreiraId, acessibilidadeId])
+  @@index([acessibilidadeId])
+}
+
+model Empresa {
+  id                Int       @id @default(autoincrement())
+  razaoSocial       String
+  nomeFantasia      String
+  cnpj              String    @unique
+  inscricaoEstadual String?
+  porteEmpresa      String
+  setorAtuacao      String
+  sobre             String
+  site              String?
+  cep               String
+  estado            String
+  cidade            String
+  endereco          String
+  numero            String
+  bairro            String
+  complemento       String?
+
+  usuarios          Usuario[]
+  vagas             Vaga[]
+
+  responsavelId     Int?      @unique
+  responsavel       Usuario?  @relation("ResponsavelEmpresa", fields: [responsavelId], references: [id])
+
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Vaga {
+  id              Int                   @id @default(autoincrement())
+  empresaId       Int
+  empresa         Empresa               @relation(fields: [empresaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  titulo          String
+  descricao       String
+  escolaridade    String?
+  subtiposAceitos VagaSubtipo[]
+  acessibilidades VagaAcessibilidade[]
+  vinculos        Vinculo[]
+  candidaturas    Candidatura[]
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model VagaSubtipo {
+  vagaId    Int
+  subtipoId Int
+  vaga      Vaga               @relation(fields: [vagaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subtipo   SubtipoDeficiencia @relation(fields: [subtipoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([vagaId, subtipoId])
+  @@index([subtipoId])
+}
+
+model VagaAcessibilidade {
+  vagaId           Int
+  acessibilidadeId Int
+  vaga             Vaga           @relation(fields: [vagaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  acessibilidade   Acessibilidade @relation(fields: [acessibilidadeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([vagaId, acessibilidadeId])
+  @@index([acessibilidadeId])
+}
+
+model Pcd {
+  id                 Int                 @id @default(autoincrement())
+  nome               String
+  email              String              @unique
+  senha              String
+  telefone           String
+  cpf                String              @unique
+  dataNasc           DateTime
+  escolaridade       String?
+  enderecoId         Int
+  endereco           Endereco            @relation(fields: [enderecoId], references: [id])
+  curriculoUrl       String?
+  fotoUrl            String?
+  aceitouTermos      Boolean             @default(false)
+  subtipoPcd         PcdSubtipo[]
+  acessibilidadePcd  PcdAcessibilidade[]
+  candidaturas       Candidatura[]
+
+  usuario            Usuario?            @relation("UsuarioPcd", fields: [usuarioId], references: [id])
+  usuarioId          Int?                @unique
+
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model PcdSubtipo {
+  pcdId     Int
+  subtipoId Int
+  cid       String?
+  pcd       Pcd                 @relation(fields: [pcdId], references: [id], onDelete: Cascade)
+  subtipo   SubtipoDeficiencia @relation(fields: [subtipoId], references: [id], onDelete: Cascade)
+
+  @@id([pcdId, subtipoId])
+  @@index([subtipoId])
+}
+
+model PcdAcessibilidade {
+  pcdId            Int
+  acessibilidadeId Int
+  pcd              Pcd           @relation(fields: [pcdId], references: [id], onDelete: Cascade)
+  acessibilidade   Acessibilidade @relation(fields: [acessibilidadeId], references: [id], onDelete: Cascade)
+
+  @@id([pcdId, acessibilidadeId])
+  @@index([acessibilidadeId])
+}
+
+model Candidatura {
+  id        Int                @id @default(autoincrement())
+  vagaId    Int
+  pcdId     Int
+  vaga      Vaga               @relation(fields: [vagaId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  pcd       Pcd                @relation(fields: [pcdId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status    StatusCandidatura  @default(ENVIADA)
+  mensagem  String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  @@index([vagaId])
+  @@index([pcdId])
+}
+
+model Usuario {
+  id         Int      @id @default(autoincrement())
+  nome       String
+  cargo      String?     // CORRIGIDO AQUI ✔
+  cpf        String   @unique
+  telefone   String
+  email      String   @unique
+  senha      String
+  tipo       TipoUsuario
+
+  empresaId  Int?
+  empresa    Empresa? @relation(fields: [empresaId], references: [id])
+
+  pcd        Pcd?     @relation("UsuarioPcd")
+
+  createdAt  DateTime @default(now())
+
+  Empresa    Empresa[] @relation("ResponsavelEmpresa")
+}
+
+model Endereco {
+  id      Int    @id @default(autoincrement())
+  rua     String
+  numero  String
+  bairro  String
+  cidade  String
+  estado  String
+  cep     String
+  pais    String @default("Brasil")
+
+  pcds    Pcd[]
+}
