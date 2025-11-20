@@ -60,7 +60,6 @@ const PcdService = {
       cidade: dados.endereco.cidade,
       estado: dados.endereco.estado,
       cep: dados.endereco.cep,
-      complemento: dados.endereco.complemento ?? undefined,
     });
 
     const senhaHash = await hash(dados.senha, 10);

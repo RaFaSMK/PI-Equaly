@@ -11,9 +11,13 @@ export const PcdController = {
     try {
       const resultado = await PcdService.criarPcd(req.body);
       res.status(201).json(resultado);
-    } catch (err) {
-      const error = err as Error;
-      res.status(400).json({ error: (error as Error).message });
+    } catch (err: any) {
+      if (err.code && err.meta) {
+        // Prisma error
+        res.status(400).json({ error: err.message, details: err.meta });
+      } else {
+        res.status(400).json({ error: err.message || String(err) });
+      }
     }
   },
 
@@ -109,3 +113,25 @@ export const PcdController = {
     }
   },
 };
+
+// Busca endereço por CEP
+import axios from "axios";
+export async function buscarEnderecoPorCep(req: Request, res: Response) {
+  const { cep } = req.params;
+  try {
+    const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+    if (response.data.erro) {
+      return res.status(404).json({ error: "CEP não encontrado" });
+    }
+    res.json({
+      rua: response.data.logradouro,
+      bairro: response.data.bairro,
+      cidade: response.data.localidade,
+      estado: response.data.uf,
+      cep: response.data.cep,
+      complemento: response.data.complemento,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: "Erro ao buscar CEP", details: err.message });
+  }
+}

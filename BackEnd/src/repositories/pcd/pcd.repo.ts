@@ -7,7 +7,6 @@ type EnderecoDTO = {
   cidade: string;
   estado: string;
   cep: string;
-  complemento?: string;
 };
 
 type CreatePcdDTO = {

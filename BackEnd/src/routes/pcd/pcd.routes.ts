@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { PcdController } from "../../controllers/pcd/pcd.controller";
+import { buscarEnderecoPorCep } from "../../controllers/pcd/pcd.controller";
 import { authMiddleware } from "../../middlewares/auth.middleware";
 import multer from "multer";
 
@@ -18,6 +19,9 @@ export const upload = multer({ storage });
 
 // LISTAR TODOS OS PCDs
 router.get("/", PcdController.listarTodos);
+
+// BUSCAR ENDEREÇO POR CEP
+router.get("/endereco/:cep", buscarEnderecoPorCep);
 
 // CRIAR
 router.post("/", PcdController.criar);

@@ -1,20 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { getAuth, clearAuth } from "../lib/auth";
 import Image from "next/image";
-
-function getInitialTheme() {
-  if (typeof window === "undefined") return "light";
-  return localStorage.getItem("theme") || "light";
-}
-
-function setHtmlTheme(theme: string) {
-  if (typeof document !== "undefined") {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }
-}
 
 export default function Navbar() {
   const [userName, setUserName] = useState<string | null>(
@@ -23,12 +12,6 @@ export default function Navbar() {
   const [userTipo, setUserTipo] = useState<string | null>(
     () => getAuth()?.usuario?.tipo ?? null
   );
-  const [theme, setTheme] = useState<string>(() => getInitialTheme());
-
-  useEffect(() => {
-    setHtmlTheme(theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
 
   function handleLogout() {
     clearAuth();
@@ -36,16 +19,12 @@ export default function Navbar() {
     setUserTipo(null);
   }
 
-  function toggleTheme() {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
-  }
-
   return (
-    <header className="w-full border-b border-zinc-200 bg-white dark:bg-zinc-900">
+    <header className="w-full border-b border-zinc-200 bg-white">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="flex items-center gap-2 text-xl font-semibold text-zinc-900 dark:text-white"
+          className="flex items-center gap-2 text-xl font-semibold text-zinc-900"
         >
           <Image
             src="/icon.svg"
@@ -58,44 +37,9 @@ export default function Navbar() {
           EQualy
         </Link>
         <div className="flex items-center gap-3">
-          <button
-            onClick={toggleTheme}
-            aria-label="Alternar tema"
-            className="rounded-full border border-zinc-300 bg-white dark:bg-zinc-800 p-2 text-zinc-700 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition"
-          >
-            {theme === "light" ? (
-              <svg
-                width={20}
-                height={20}
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="10" cy="10" r="5" fill="#755fe3" />
-                <path
-                  d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"
-                  stroke="#755fe3"
-                  strokeWidth="1.5"
-                />
-              </svg>
-            ) : (
-              <svg
-                width={20}
-                height={20}
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M15.5 10A5.5 5.5 0 0 1 10 15.5c-3.04 0-5.5-2.46-5.5-5.5 0-3.04 2.46-5.5 5.5-5.5A5.5 5.5 0 0 1 15.5 10Z"
-                  fill="#755fe3"
-                />
-              </svg>
-            )}
-          </button>
           <Link
             href="/vagas"
-            className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
           >
             Vagas
           </Link>
@@ -104,7 +48,7 @@ export default function Navbar() {
               {userTipo === "PCD" && (
                 <Link
                   href="/dashboard"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
                 >
                   Dashboard
                 </Link>
@@ -112,12 +56,12 @@ export default function Navbar() {
               {userTipo === "EMPRESA" && (
                 <Link
                   href="/empresa/painel"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
                 >
                   Painel Empresa
                 </Link>
               )}
-              <span className="hidden sm:inline text-sm text-zinc-600 dark:text-zinc-300">
+              <span className="hidden sm:inline text-sm text-zinc-600">
                 Olá, {userName.split(" ")[0]}
               </span>
               <button
@@ -131,7 +75,7 @@ export default function Navbar() {
             <div className="flex items-center gap-2">
               <Link
                 href="/login"
-                className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                className="rounded-md px-3 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100"
               >
                 Entrar
               </Link>
