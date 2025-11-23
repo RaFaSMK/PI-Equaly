@@ -39,4 +39,10 @@ router.post(
   PcdController.uploadCurriculo
 );
 
+// ATUALIZAR BARREIRAS DO PCD
+router.put("/:id/barreiras", authMiddleware, PcdController.atualizarBarreiras);
+
+// ATUALIZAR SUBTIPOS DO PCD
+router.put("/:id/subtipos", authMiddleware, PcdController.atualizarSubtipos);
+
 export default router;

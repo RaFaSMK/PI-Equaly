@@ -1,109 +1,55 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { apiFetch } from "../../lib/api";
-import { setAuth } from "../../lib/auth";
-import { useToast } from "../../components/Toaster";
+import Link from "next/link";
 
 export default function LoginPage() {
- const router = useRouter();
- const params = useSearchParams();
- const role = params.get("role") || "pcd";
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+      <div className="w-full max-w-md space-y-6 sm:space-y-8 p-6 sm:p-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-[#755fe3] mb-4">
+            Escolha o tipo de login
+          </h1>
+          <p className="text-gray-600">
+            Selecione a opção que melhor se adequa ao seu perfil
+          </p>
+        </div>
 
- const [email, setEmail] = useState("");
- const [senha, setSenha] = useState("");
- const [loading, setLoading] = useState(false);
- const [error, setError] = useState<string | null>(null);
- const { show } = useToast();
+        <div className="space-y-4">
+          <Link
+            href="/login/pcd"
+            className="block w-full py-3 sm:py-4 px-4 sm:px-6 text-center bg-[#755fe3] text-white font-bold rounded-lg hover:opacity-90 transition-all text-sm sm:text-base"
+          >
+            Sou Candidato (PCD)
+          </Link>
 
- async function onSubmit(e: React.FormEvent) {
- e.preventDefault();
- setLoading(true);
- setError(null);
- try {
- type Usuario = {
- id: number;
- nome: string;
- email: string;
- tipo: string;
- empresaId?: number | null;
- pcdId?: number | null;
- };
- const res = await apiFetch<{ usuario: Usuario; token: string }>(
- "/auth/login",
- {
- method: "POST",
- body: JSON.stringify({ email, senha }),
- }
- );
- setAuth({
- token: res.token,
- usuario: res.usuario,
- pcdId: res.usuario.pcdId ?? null,
- });
- show("Login realizado com sucesso", "success");
- // Se for PCD, leva para vagas ou dashboard
- if (res.usuario.tipo === "PCD") router.push("/vagas");
- else router.push("/vagas");
- } catch (err) {
- const msg = err instanceof Error ? err.message : "Erro ao entrar";
- setError(msg);
- show(msg, "error");
- } finally {
- setLoading(false);
- }
- }
+          <Link
+            href="/login/empresa"
+            className="block w-full py-3 sm:py-4 px-4 sm:px-6 text-center bg-white border-2 border-[#755fe3] text-[#755fe3] font-bold rounded-lg hover:bg-zinc-50 transition-all text-sm sm:text-base"
+          >
+            Sou Empresa
+          </Link>
+        </div>
 
- return (
- <div className="mx-auto max-w-md">
- <h1 className="mb-6 text-2xl font-semibold text-zinc-900">
- Entrar {role === "empresa" ? "(Empresa)" : ""}
- </h1>
- <form onSubmit={onSubmit} className="space-y-4">
- <div>
- <label className="block text-sm font-medium text-zinc-800">
- E-mail
- </label>
- <input
- type="email"
- value={email}
- onChange={(e) => setEmail(e.target.value)}
- required
- className="mt-1 w-full rounded-md border border-zinc-300 bg-white text-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#755fe3]"
- />
- </div>
- <div>
- <label className="block text-sm font-medium text-zinc-800">
- Senha
- </label>
- <input
- type="password"
- value={senha}
- onChange={(e) => setSenha(e.target.value)}
- required
- className="mt-1 w-full rounded-md border border-zinc-300 bg-white text-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#755fe3]"
- />
- </div>
- {error && (
- <p className="text-sm text-red-600">{error}</p>
- )}
- <button
- disabled={loading}
- className="w-full rounded-md bg-[#755fe3] px-4 py-2 text-white hover:opacity-95 disabled:opacity-60"
- >
- {loading ? "Entrando..." : "Entrar"}
- </button>
- </form>
- <p className="mt-4 text-sm text-zinc-600">
- Ainda não tem conta?{" "}
- <a
- href="/cadastro/pcd"
- className="text-[#755fe3] underline"
- >
- Cadastre-se
- </a>
- </p>
- </div>
- );
+        <div className="text-center text-sm text-gray-600">
+          <p>
+            Não tem conta?{" "}
+            <Link
+              href="/cadastro/pcd"
+              className="text-[#755fe3] hover:underline font-semibold"
+            >
+              Cadastre-se como candidato
+            </Link>
+            {" ou "}
+            <Link
+              href="/cadastro/empresa"
+              className="text-[#755fe3] hover:underline font-semibold"
+            >
+              cadastre-se como empresa
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }

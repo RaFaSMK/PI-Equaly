@@ -49,7 +49,13 @@ export async function listarPorPcd(userId: number) {
 
   return prisma.candidatura.findMany({
     where: { pcdId: pcd?.id },
-    include: { vaga: true },
+    include: {
+      vaga: {
+        include: {
+          empresa: true,
+        },
+      },
+    },
   });
 }
 

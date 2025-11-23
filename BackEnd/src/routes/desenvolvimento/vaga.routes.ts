@@ -10,6 +10,7 @@ const router = Router();
 
 // Rotas públicas
 router.get("/", VagaController.listar);
+router.get("/compativeis", VagaController.listarCompativeis);
 router.get("/:id", VagaController.buscar);
 
 // Rotas protegidas - apenas o responsável da empresa pode criar/editar/deletar

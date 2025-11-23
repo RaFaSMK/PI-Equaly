@@ -8,6 +8,7 @@ import candidaturaRoutes from "./candidatura/candidatura.routes";
 // Novos routers de desenvolvimento
 import acessibilidadesRoutes from "../routes/desenvolvimento/acessibilidades.routes";
 import barreirasRoutes from "../routes/desenvolvimento/barreiras.routes";
+import barreiraAcessibilidadeRoutes from "../routes/desenvolvimento/barreiraAcessibilidade.routes";
 import tiposRoutes from "../routes/desenvolvimento/tipos.routes";
 import subtiposRoutes from "../routes/desenvolvimento/subtipos.routes";
 import vinculosRoutes from "../routes/desenvolvimento/vinculos.routes";
@@ -26,6 +27,7 @@ router.use("/candidaturas", candidaturaRoutes);
 // Novos endpoints de desenvolvimento
 router.use("/acessibilidades", acessibilidadesRoutes);
 router.use("/barreiras", barreirasRoutes);
+router.use("/barreira-acessibilidade", barreiraAcessibilidadeRoutes);
 router.use("/tipos", tiposRoutes);
 router.use("/subtipos", subtiposRoutes);
 router.use("/vinculos", vinculosRoutes);

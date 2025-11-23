@@ -30,7 +30,7 @@ export const PcdRepository = {
       include: {
         endereco: true,
         subtipoPcd: { include: { subtipo: true } },
-        acessibilidadePcd: { include: { acessibilidade: true } },
+        barreirasPcd: { include: { barreira: true } },
       },
       orderBy: { id: "asc" },
     });
@@ -42,7 +42,7 @@ export const PcdRepository = {
       include: {
         endereco: true,
         subtipoPcd: { include: { subtipo: true } },
-        acessibilidadePcd: { include: { acessibilidade: true } },
+        barreirasPcd: { include: { barreira: true } },
         candidaturas: true,
       },
     });
@@ -62,7 +62,7 @@ export const PcdRepository = {
       include: {
         endereco: true,
         subtipoPcd: { include: { subtipo: true } },
-        acessibilidadePcd: { include: { acessibilidade: true } },
+        barreirasPcd: { include: { barreira: true } },
         candidaturas: true,
       },
     });
@@ -94,10 +94,22 @@ export const PcdRepository = {
     });
   },
 
-  async addAcessibilidades(pcdId: number, acessibilidadeIds: number[]) {
-    return prisma.pcdAcessibilidade.createMany({
-      data: acessibilidadeIds.map((id) => ({ pcdId, acessibilidadeId: id })),
+  async addBarreiras(pcdId: number, barreiraIds: number[]) {
+    return prisma.pcdBarreira.createMany({
+      data: barreiraIds.map((barreiraId) => ({ pcdId, barreiraId })),
       skipDuplicates: true,
+    });
+  },
+
+  async removeBarreiras(pcdId: number) {
+    return prisma.pcdBarreira.deleteMany({
+      where: { pcdId },
+    });
+  },
+
+  async removeSubtipos(pcdId: number) {
+    return prisma.pcdSubtipo.deleteMany({
+      where: { pcdId },
     });
   },
 };

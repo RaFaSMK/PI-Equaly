@@ -21,7 +21,8 @@ type CreatePcdDTO = {
   senha: string;
   confirmarSenha: string;
   curriculoUrl?: string;
-  subtipoIds?: number[];
+  subtipoIds?: Array<{ id: number; cid?: string }>;
+  barreiraIds?: number[];
 };
 
 const PcdService = {
@@ -91,6 +92,16 @@ const PcdService = {
     // Atualizar o PCD com o usuarioId
     await PcdRepository.update(pcd.id, { usuarioId: usuario.id });
 
+    // Adicionar subtipos se fornecidos
+    if (dados.subtipoIds && dados.subtipoIds.length > 0) {
+      await PcdRepository.addSubtipos(pcd.id, dados.subtipoIds);
+    }
+
+    // Adicionar barreiras se fornecidas
+    if (dados.barreiraIds && dados.barreiraIds.length > 0) {
+      await PcdRepository.addBarreiras(pcd.id, dados.barreiraIds);
+    }
+
     return {
       mensagem: "Cadastro realizado com sucesso",
       pcd,
@@ -116,6 +127,29 @@ const PcdService = {
 
   async atualizarCurriculo(id: number, url: string) {
     return PcdRepository.update(id, { curriculoUrl: url });
+  },
+
+  async atualizarBarreiras(pcdId: number, barreiraIds: number[]) {
+    // Remove barreiras antigas
+    await PcdRepository.removeBarreiras(pcdId);
+    // Adiciona novas barreiras
+    if (barreiraIds && barreiraIds.length > 0) {
+      await PcdRepository.addBarreiras(pcdId, barreiraIds);
+    }
+    return { mensagem: "Barreiras atualizadas com sucesso" };
+  },
+
+  async atualizarSubtipos(
+    pcdId: number,
+    subtipoIds: Array<{ id: number; cid?: string }>
+  ) {
+    // Remove subtipos antigos
+    await PcdRepository.removeSubtipos(pcdId);
+    // Adiciona novos subtipos
+    if (subtipoIds && subtipoIds.length > 0) {
+      await PcdRepository.addSubtipos(pcdId, subtipoIds);
+    }
+    return { mensagem: "Subtipos atualizados com sucesso" };
   },
 };
 

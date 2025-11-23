@@ -2,7 +2,10 @@ import prisma from "../../prisma/client";
 
 export const TiposRepo = {
   list() {
-    return prisma.tipoDeficiencia.findMany({ orderBy: { id: "asc" } });
+    return prisma.tipoDeficiencia.findMany({
+      orderBy: { id: "asc" },
+      include: { subtipos: { select: { id: true, nome: true } } },
+    });
   },
 
   create(nome: string) {
@@ -10,7 +13,10 @@ export const TiposRepo = {
   },
 
   findById(id: number) {
-    return prisma.tipoDeficiencia.findUnique({ where: { id } });
+    return prisma.tipoDeficiencia.findUnique({
+      where: { id },
+      include: { subtipos: { select: { id: true, nome: true } } },
+    });
   },
 
   update(id: number, nome: string) {

@@ -32,7 +32,13 @@ export const EmpresasController = {
       const id = Number(req.params.id);
       const empresa = await prisma.empresa.findUnique({
         where: { id },
-        include: { vagas: true },
+        include: {
+          vagas: {
+            include: {
+              acessibilidades: { include: { acessibilidade: true } },
+            },
+          },
+        },
       });
       if (!empresa)
         return res.status(404).json({ error: "Empresa não encontrada" });
@@ -86,7 +92,13 @@ export const EmpresasController = {
 
       const empresa = await prisma.empresa.findUnique({
         where: { responsavelId: authReq.user.id },
-        include: { vagas: true },
+        include: {
+          vagas: {
+            include: {
+              acessibilidades: { include: { acessibilidade: true } },
+            },
+          },
+        },
       });
 
       if (!empresa) {

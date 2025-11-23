@@ -5,10 +5,40 @@
   --foreground: #171717;
 }
 
+/* Base do HTML para controle de acessibilidade */
+html {
+  font-size: 100%; /* 16px padrão, mas pode ser ajustado dinamicamente */
+}
+
+/* Forçar todas as fontes a respeitarem o tamanho base ajustado */
+* {
+  /* Garantir que todos os elementos herdem o font-size relativo */
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  /* Não definir font-size fixo aqui - deixar herdar do html */
+}
+
+/* Garantir que todos os elementos de texto respondam ao ajuste */
+body *,
+html * {
+  transition: font-size 0.2s ease, line-height 0.2s ease !important;
+}
+
+/* Headings respondem proporcionalmente ao tamanho da fonte base */
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.75rem;
+}
+
+h3 {
+  font-size: 1.5rem;
 }
 
 /* Tailwind classes will be used for styling instead of custom utilities */
