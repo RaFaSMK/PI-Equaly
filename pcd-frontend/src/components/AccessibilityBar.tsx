@@ -9,7 +9,8 @@ export default function AccessibilityBar() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timeoutId = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // Calcular porcentagem para exibir
@@ -34,7 +35,7 @@ export default function AccessibilityBar() {
         <div className="flex items-center gap-2 sm:gap-3">
           <span
             suppressHydrationWarning
-            className="hidden md:inline text-[11px] font-semibold text-zinc-700 bg-white px-2 py-0.5 rounded border border-[#755fe3]/40 min-w-[3rem] text-center"
+            className="hidden md:inline text-[11px] font-semibold text-zinc-700 bg-white px-2 py-0.5 rounded border border-[#755fe3]/40 min-w-12 text-center"
           >
             {displayPercentage}%
           </span>

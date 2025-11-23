@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
@@ -22,6 +22,19 @@ export default function AcessibilidadesAdminPage() {
   const [editandoDescricao, setEditandoDescricao] = useState("");
   const [criando, setCriando] = useState(false);
 
+  const fetchAcessibilidades = useCallback(async () => {
+    try {
+      const response = await apiFetch<{ data: Acessibilidade[] }>(
+        "/acessibilidades"
+      );
+      setAcessibilidades(response.data);
+    } catch {
+      show("Erro ao carregar acessibilidades", "error");
+    } finally {
+      setLoading(false);
+    }
+  }, [show]);
+
   useEffect(() => {
     const auth = getAuth();
     if (!auth?.token) {
@@ -30,20 +43,7 @@ export default function AcessibilidadesAdminPage() {
     }
 
     fetchAcessibilidades();
-  }, [router]);
-
-  async function fetchAcessibilidades() {
-    try {
-      const response = await apiFetch<{ data: Acessibilidade[] }>(
-        "/acessibilidades"
-      );
-      setAcessibilidades(response.data);
-    } catch (error) {
-      show("Erro ao carregar acessibilidades", "error");
-    } finally {
-      setLoading(false);
-    }
-  }
+  }, [router, fetchAcessibilidades]);
 
   async function handleCriar() {
     if (!novaDescricao.trim()) {
@@ -63,7 +63,8 @@ export default function AcessibilidadesAdminPage() {
       show("Acessibilidade criada com sucesso!", "success");
       setNovaDescricao("");
       fetchAcessibilidades();
-    } catch (error: any) {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       show(error.message || "Erro ao criar acessibilidade", "error");
     } finally {
       setCriando(false);
@@ -88,7 +89,8 @@ export default function AcessibilidadesAdminPage() {
       setEditandoId(null);
       setEditandoDescricao("");
       fetchAcessibilidades();
-    } catch (error: any) {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       show(error.message || "Erro ao atualizar acessibilidade", "error");
     }
   }
@@ -111,7 +113,8 @@ export default function AcessibilidadesAdminPage() {
 
       show("Acessibilidade deletada com sucesso!", "success");
       fetchAcessibilidades();
-    } catch (error: any) {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       show(error.message || "Erro ao deletar acessibilidade", "error");
     }
   }
@@ -233,7 +236,7 @@ export default function AcessibilidadesAdminPage() {
                     ) : (
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div className="flex-1 min-w-0">
-                          <p className="text-zinc-900 font-medium break-words">
+                          <p className="text-zinc-900 font-medium wrap-break-word">
                             {acessibilidade.descricao}
                           </p>
                           <p className="text-xs text-zinc-500 mt-1">

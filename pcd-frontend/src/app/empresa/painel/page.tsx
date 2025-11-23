@@ -32,7 +32,6 @@ export default function PainelEmpresaPage() {
 
   const [empresa, setEmpresa] = useState<Empresa | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -297,10 +296,10 @@ export default function PainelEmpresaPage() {
                 className="rounded-lg border border-zinc-200 bg-white p-4"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div className="font-medium text-zinc-900 break-words">
+                  <div className="font-medium text-zinc-900 wrap-break-word">
                     {v.titulo}
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     <Link
                       href={`/empresa/vagas/${v.id}`}
                       className="rounded-md bg-[#755fe3] px-3 py-1.5 text-sm text-white hover:opacity-95 font-medium"

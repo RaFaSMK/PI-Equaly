@@ -61,7 +61,8 @@ export default function BarreirasAdminPage() {
       show("Barreira criada com sucesso!", "success");
       setNovaDescricao("");
       fetchBarreiras();
-    } catch (error: any) {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       show(error.message || "Erro ao criar barreira", "error");
     } finally {
       setCriando(false);
@@ -105,7 +106,8 @@ export default function BarreirasAdminPage() {
 
       show("Barreira deletada com sucesso!", "success");
       fetchBarreiras();
-    } catch (error: any) {
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
       show(error.message || "Erro ao deletar barreira", "error");
     }
   }
@@ -225,14 +227,14 @@ export default function BarreirasAdminPage() {
                     ) : (
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div className="flex-1 min-w-0">
-                          <p className="text-zinc-900 font-medium break-words">
+                          <p className="text-zinc-900 font-medium wrap-break-word">
                             {barreira.descricao}
                           </p>
                           <p className="text-xs text-zinc-500 mt-1">
                             ID: {barreira.id}
                           </p>
                         </div>
-                        <div className="flex gap-2 flex-shrink-0">
+                        <div className="flex gap-2 shrink-0">
                           <button
                             onClick={() => iniciarEdicao(barreira)}
                             className="flex-1 sm:flex-none px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
