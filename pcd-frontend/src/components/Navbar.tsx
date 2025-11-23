@@ -63,27 +63,32 @@ export default function Navbar() {
   }
 
   return (
-    <header className="w-full border-b border-zinc-200 bg-white">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-3 py-2 sm:px-4 sm:py-3 lg:px-8">
+    <header className="w-full bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/80 border-b border-zinc-200">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-3 py-2.5 sm:px-4 sm:py-3.5 lg:px-8">
         <Link
           href="/"
-          className="flex items-center gap-1.5 sm:gap-2 text-lg sm:text-xl font-semibold text-zinc-900"
+          className="group flex items-center gap-2 sm:gap-2.5 text-lg sm:text-xl font-semibold text-zinc-900"
         >
           <Image
             src="/icon.svg"
             alt="Logo EQualy"
-            width={24}
-            height={24}
-            className="h-5 w-5 sm:h-6 sm:w-6"
+            width={28}
+            height={28}
+            className="h-6 w-6 sm:h-7 sm:w-7 transition-transform group-hover:scale-105"
             priority
           />
-          EQualy
+          <span>
+            EQualy
+            <span className="ml-2 align-middle text-[10px] font-medium text-white bg-[#755fe3] px-1.5 py-0.5 rounded-full hidden sm:inline">
+              PCD
+            </span>
+          </span>
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           {(!userName || userTipo === "PCD") && (
             <Link
               href="/vagas"
-              className="rounded-md px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium text-zinc-700 hover:bg-zinc-100"
+              className="rounded-md border border-[#755fe3] bg-[#755fe3] px-3 py-2 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-[#6248e5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#755fe3]"
             >
               Vagas
             </Link>
@@ -266,7 +271,7 @@ export default function Navbar() {
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="rounded-md bg-[#755fe3] px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium text-white hover:opacity-90"
+                    className="rounded-md border border-[#755fe3] bg-[#755fe3] px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-[#6248e5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#755fe3]"
                   >
                     Sair
                   </button>
@@ -277,13 +282,7 @@ export default function Navbar() {
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Link
                 href="/login"
-                className="rounded-md px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium text-zinc-700 hover:bg-zinc-100"
-              >
-                Entrar
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-md bg-[#755fe3] px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-medium text-white hover:opacity-95"
+                className="rounded-md border border-[#755fe3] bg-[#755fe3] px-2.5 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#6248e5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#755fe3]"
               >
                 Cadastrar
               </Link>

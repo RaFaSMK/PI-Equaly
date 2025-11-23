@@ -6,6 +6,7 @@ import Link from "next/link";
 import { apiFetch } from "../../../lib/api";
 import { setAuth } from "../../../lib/auth";
 import { useToast } from "../../../components/Toaster";
+import Image from "next/image";
 
 export default function LoginEmpresaPage() {
   const router = useRouter();
@@ -53,20 +54,26 @@ export default function LoginEmpresaPage() {
 
   return (
     <div className="flex min-h-screen">
-      {/* Painel esquerdo roxo */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#755fe3] flex-col items-center justify-center text-white p-12">
-        <div className="max-w-md text-center space-y-6">
-          <h1 className="text-5xl font-bold">Bem-vindo!</h1>
-          <p className="text-lg opacity-90">Para se manter conectado conosco</p>
-          <p className="text-lg opacity-90">
-            faça login com suas informações pessoais
-          </p>
-          <Link
-            href="/cadastro/empresa"
-            className="inline-block mt-8 px-12 py-3 border-2 border-white rounded-full text-white font-semibold hover:bg-white hover:text-[#755fe3] transition-all"
-          >
-            CADASTRAR
-          </Link>
+      {/* Painel esquerdo roxo com imagem */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#755fe3] flex-col items-center justify-center text-white p-12 relative">
+        <div className="max-w-xl w-full space-y-10">
+          <div className="relative w-full max-w-[520px] aspect-video mx-auto">
+            <Image
+              src="/ImagemLoginEmpresa.png"
+              alt="Empresa promovendo inclusão com profissionais diversos"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+          <div className="text-center space-y-3">
+            <h1 className="text-4xl font-bold">
+              Conecte sua Empresa à Inclusão.
+            </h1>
+            <p className="text-lg opacity-95">
+              Encontre talentos PCD e fortaleça sua cultura diversa.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -80,13 +87,13 @@ export default function LoginEmpresaPage() {
             <p className="text-gray-500">ou use seu e-mail para login:</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <input
                 type="email"
                 placeholder="Email"
                 required
-                className="w-full px-4 py-3 rounded-lg bg-gray-100 border-none focus:ring-2 focus:ring-[#755fe3] text-gray-800"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 border-2 border-gray-200 focus:border-[#755fe3] focus:ring-2 focus:ring-[#755fe3]/20 text-gray-800 placeholder-gray-400 transition-all"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
@@ -96,7 +103,7 @@ export default function LoginEmpresaPage() {
                 type="password"
                 placeholder="Senha"
                 required
-                className="w-full px-4 py-3 rounded-lg bg-gray-100 border-none focus:ring-2 focus:ring-[#755fe3] text-gray-800"
+                className="w-full px-4 py-3 rounded-lg bg-gray-50 border-2 border-gray-200 focus:border-[#755fe3] focus:ring-2 focus:ring-[#755fe3]/20 text-gray-800 placeholder-gray-400 transition-all"
                 value={form.senha}
                 onChange={(e) => setForm({ ...form, senha: e.target.value })}
               />
@@ -105,7 +112,7 @@ export default function LoginEmpresaPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-[#755fe3] text-white font-bold rounded-full hover:opacity-90 transition-all disabled:opacity-50"
+              className="w-full py-3 bg-[#755fe3] text-white font-bold rounded-full hover:bg-[#6248e5] transition-all disabled:opacity-50 shadow-md"
             >
               {loading ? "ENTRANDO..." : "ENTRAR"}
             </button>

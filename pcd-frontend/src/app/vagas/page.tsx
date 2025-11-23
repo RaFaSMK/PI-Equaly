@@ -35,28 +35,31 @@ export default function VagasPage() {
   const [filtroMetodo, setFiltroMetodo] = useState("");
   const [filtroCompatibilidade, setFiltroCompatibilidade] = useState(0);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        // Se for PCD logado, buscar vagas com compatibilidade
-        if (isPcd && pcdId) {
-          const data = await apiFetch<{ data: Vaga[] }>(
-            `/vagas/compativeis?pcdId=${pcdId}`
-          );
-          setVagas(data.data);
-          setVagasFiltradas(data.data);
-        } else {
-          // Caso contrário, buscar todas as vagas normalmente
-          const data = await apiFetch<{ data: Vaga[] }>("/vagas");
-          setVagas(data.data);
-          setVagasFiltradas(data.data);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Erro ao carregar vagas");
-      } finally {
-        setLoading(false);
+  async function loadVagas() {
+    setLoading(true);
+    setError(null);
+    try {
+      if (isPcd && pcdId) {
+        const data = await apiFetch<{ data: Vaga[] }>(
+          `/vagas/compativeis?pcdId=${pcdId}`
+        );
+        setVagas(data.data);
+        setVagasFiltradas(data.data);
+      } else {
+        const data = await apiFetch<{ data: Vaga[] }>("/vagas");
+        setVagas(data.data);
+        setVagasFiltradas(data.data);
       }
-    })();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao carregar vagas");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadVagas();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPcd, pcdId]);
 
   // Aplicar filtros
@@ -117,8 +120,27 @@ export default function VagasPage() {
     return "bg-red-100 text-red-800";
   }
 
-  if (loading) return <p>Carregando vagas...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+  if (loading)
+    return (
+      <div className="rounded-lg border border-zinc-200 bg-white p-6 text-center text-zinc-700">
+        Carregando vagas...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
+        <p className="text-sm font-medium text-red-700">
+          Não foi possível carregar as vagas.
+        </p>
+        <p className="mt-1 text-xs text-red-600">{error}</p>
+        <button
+          onClick={loadVagas}
+          className="mt-3 inline-flex items-center rounded-md bg-[#755fe3] px-4 py-2 text-sm font-semibold text-white hover:opacity-95"
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
 
   return (
     <div>
@@ -261,7 +283,7 @@ export default function VagasPage() {
                 </span>
               )}
               {vaga.metodoTrabalho && (
-                <span className="rounded bg-[#755fe3] bg-opacity-10 text-white px-2 py-0.5">
+                <span className="rounded bg-[#755fe3]/10 text-[#4f3dd3] px-2 py-0.5">
                   {vaga.metodoTrabalho}
                 </span>
               )}

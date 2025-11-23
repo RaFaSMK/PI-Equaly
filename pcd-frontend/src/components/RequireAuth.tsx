@@ -5,28 +5,28 @@ import { useRouter } from "next/navigation";
 import { getAuth } from "../lib/auth";
 
 type Props = {
- role?: "PCD" | "EMPRESA";
- children: ReactNode;
- redirectTo?: string;
+  role?: "PCD" | "EMPRESA" | "DESENVOLVEDOR" | "ADMIN";
+  children: ReactNode;
+  redirectTo?: string;
 };
 
 export default function RequireAuth({
- role,
- children,
- redirectTo = "/login",
+  role,
+  children,
+  redirectTo = "/login",
 }: Props) {
- const router = useRouter();
- const auth = getAuth();
+  const router = useRouter();
+  const auth = getAuth();
 
- const ok = Boolean(auth?.token) && (!role || auth?.usuario?.tipo === role);
+  const ok = Boolean(auth?.token) && (!role || auth?.usuario?.tipo === role);
 
- useEffect(() => {
- if (!ok) router.push(redirectTo);
- // eslint-disable-next-line react-hooks/exhaustive-deps
- }, [ok]);
+  useEffect(() => {
+    if (!ok) router.push(redirectTo);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ok]);
 
- if (!ok) {
- return <p className="text-zinc-700">Redirecionando para login...</p>;
- }
- return <>{children}</>;
+  if (!ok) {
+    return <p className="text-zinc-700">Redirecionando para login...</p>;
+  }
+  return <>{children}</>;
 }
