@@ -72,6 +72,30 @@ export default function PainelEmpresaPage() {
     return v.replace(/[^0-9R$.,\-\s]/g, "");
   }
 
+  // Formata a faixa salarial para BRL com suporte a intervalo usando '-'
+  function formatBRLFromDigits(value: string) {
+    const digits = value.replace(/\D/g, "");
+    if (!digits) return "";
+    const n = parseInt(digits, 10);
+    if (Number.isNaN(n)) return "";
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+    }).format(n);
+  }
+
+  function formatFaixaMasked(input: string) {
+    // Suporta formatos: "2000" -> "R$ 2.000,00"; "2000 - 3500" -> "R$ 2.000,00 - R$ 3.500,00"
+    if (!input) return "";
+    const parts = input.split("-");
+    const formatted = parts
+      .map((p) => formatBRLFromDigits(p.trim()))
+      .filter((p) => p && p.length > 0)
+      .join(" - ");
+    return formatted;
+  }
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -132,6 +156,16 @@ export default function PainelEmpresaPage() {
     e.preventDefault();
     if (!empresa) return;
     try {
+      // Validações obrigatórias
+      if (!escolaridade) {
+        show("Informe a escolaridade da vaga.", "error");
+        return;
+      }
+      if (acessibilidadesSelecionadas.length === 0) {
+        show("Selecione ao menos uma acessibilidade oferecida.", "error");
+        return;
+      }
+
       setCreating(true);
       await apiFetch("/vagas", {
         method: "POST",
@@ -327,12 +361,12 @@ export default function PainelEmpresaPage() {
                     </select>
                     <input
                       className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
-                      placeholder="Faixa Salarial (ex: R$ 2.000 - R$ 3.000)"
+                      placeholder="Ex: R$ 2.000,00 - R$ 3.500,00"
                       inputMode="numeric"
                       pattern="[0-9R$.,\-\s]*"
                       value={editFaixaSalarial}
                       onChange={(e) =>
-                        setEditFaixaSalarial(sanitizeFaixa(e.target.value))
+                        setEditFaixaSalarial(formatFaixaMasked(e.target.value))
                       }
                     />
                     <select
@@ -495,10 +529,11 @@ export default function PainelEmpresaPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-zinc-800">
-                  Escolaridade (opcional)
+                  Escolaridade
                 </label>
                 <select
                   className="mt-1 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm"
+                  required
                   value={escolaridade}
                   onChange={(e) => setEscolaridade(e.target.value)}
                 >
@@ -529,12 +564,12 @@ export default function PainelEmpresaPage() {
                 </label>
                 <input
                   className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
-                  placeholder="Ex: R$ 2.000 - R$ 3.000"
+                  placeholder="Ex: R$ 2.000,00 - R$ 3.500,00"
                   inputMode="numeric"
                   pattern="[0-9R$.,\-\s]*"
                   value={faixaSalarial}
                   onChange={(e) =>
-                    setFaixaSalarial(sanitizeFaixa(e.target.value))
+                    setFaixaSalarial(formatFaixaMasked(e.target.value))
                   }
                 />
               </div>
@@ -619,7 +654,7 @@ export default function PainelEmpresaPage() {
 
             <div>
               <label className="block text-sm font-medium text-zinc-800 mb-2">
-                Acessibilidades Oferecidas (opcional)
+                Acessibilidades Oferecidas
               </label>
               <div className="border border-zinc-300 rounded-md bg-white p-3 max-h-40 overflow-y-auto">
                 {acessibilidades.length === 0 ? (

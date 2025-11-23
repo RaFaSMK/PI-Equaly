@@ -22,11 +22,10 @@ services:
 
   # Backend API (Development mode with hot reload)
   backend:
-    image: node:20-alpine
+    build: ./BackEnd
     container_name: pcd-backend-dev
     restart: unless-stopped
     working_dir: /app
-    command: sh -c "npm install && npx prisma generate && npx tsx watch src/server.ts"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/pcd_database?schema=public
       JWT_SECRET: ${JWT_SECRET:-dev-secret-key-change-in-production}

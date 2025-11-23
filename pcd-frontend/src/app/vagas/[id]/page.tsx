@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { apiFetch } from "../../../lib/api";
 import { getAuth } from "../../../lib/auth";
 import { useToast } from "../../../components/Toaster";
+import { Check } from "lucide-react";
 
 type Vaga = {
   id: number;
@@ -14,7 +15,9 @@ type Vaga = {
   faixaSalarial?: string | null;
   metodoTrabalho?: string | null;
   empresa?: { id: number; nomeFantasia: string; sobre?: string } | null;
-  acessibilidades?: Array<{ acessibilidade: { id: number; nome: string } }>;
+  acessibilidades?: Array<{
+    acessibilidade: { id: number; descricao: string };
+  }>;
   compatibilidade?: number;
   barreirasResolvidas?: number;
   totalBarreiras?: number;
@@ -203,9 +206,10 @@ export default function VagaDetalhePage() {
             {vaga.acessibilidades.map((acc) => (
               <span
                 key={acc.acessibilidade.id}
-                className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full"
+                className="inline-flex items-center gap-1.5 px-3 py-1 text-sm bg-green-100 text-green-800 rounded-full"
               >
-                ✓ {acc.acessibilidade.nome}
+                <Check className="w-4 h-4" aria-hidden />
+                {acc.acessibilidade.descricao}
               </span>
             ))}
           </div>

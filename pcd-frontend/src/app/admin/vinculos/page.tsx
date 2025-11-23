@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import RequireAuth from "@/components/RequireAuth";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "@/components/Toaster";
+import { Check, Trash2 } from "lucide-react";
 
 type Barreira = { id: number; descricao: string };
 type Acessibilidade = { id: number; descricao: string };
@@ -408,7 +409,8 @@ export default function VinculosPage() {
                           key={`${barreira.id}-${acess.id}`}
                           className="flex items-center gap-2 bg-green-50 text-green-800 px-3 py-1.5 rounded-md text-sm"
                         >
-                          <span>✓ {acess.descricao}</span>
+                          <Check className="w-4 h-4" aria-hidden />
+                          <span>{acess.descricao}</span>
                           {confirming === `${barreira.id}-${acess.id}` ? (
                             <div className="flex items-center gap-1">
                               <button
@@ -440,22 +442,7 @@ export default function VinculosPage() {
                               className="cursor-pointer inline-flex items-center gap-1 text-red-600 hover:text-red-700 px-2 py-0.5 rounded hover:bg-red-50 text-xs font-medium"
                               aria-label="Remover vínculo"
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="w-3.5 h-3.5"
-                              >
-                                <path d="M3 6h18" />
-                                <path d="M8 6V4h8v2" />
-                                <path d="M10 11v6" />
-                                <path d="M14 11v6" />
-                                <path d="M5 6l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-14" />
-                              </svg>
+                              <Trash2 className="w-3.5 h-3.5" aria-hidden />
                               Remover
                             </button>
                           )}

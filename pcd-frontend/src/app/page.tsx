@@ -1,5 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
+import {
+  CheckCircle2,
+  Grid3x3,
+  Plus,
+  Star,
+  FileText,
+  ArrowRight,
+} from "lucide-react";
 
 export default function Home() {
   return (
@@ -87,21 +95,7 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="rounded-lg border border-zinc-200 bg-white p-5">
             <div className="mb-2 flex items-center gap-2 text-[#755fe3]">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden
-              >
-                <path d="M9 12l2 2 4-4" />
-                <path
-                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-              </svg>
+              <CheckCircle2 className="w-5 h-5" aria-hidden />
               <h3 className="text-base font-semibold text-zinc-900">
                 Inclusão real
               </h3>
@@ -113,15 +107,7 @@ export default function Home() {
 
           <div className="rounded-lg border border-zinc-200 bg-white p-5">
             <div className="mb-2 flex items-center gap-2 text-[#755fe3]">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden
-              >
-                <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />
-              </svg>
+              <Grid3x3 className="w-5 h-5" aria-hidden />
               <h3 className="text-base font-semibold text-zinc-900">
                 Experiência simples
               </h3>
@@ -133,23 +119,7 @@ export default function Home() {
 
           <div className="rounded-lg border border-zinc-200 bg-white p-5">
             <div className="mb-2 flex items-center gap-2 text-[#755fe3]">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden
-              >
-                <path d="M12 8v8M8 12h8" />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="9"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-              </svg>
+              <Plus className="w-5 h-5" aria-hidden />
               <h3 className="text-base font-semibold text-zinc-900">
                 Crescimento
               </h3>
@@ -161,15 +131,7 @@ export default function Home() {
 
           <div className="rounded-lg border border-zinc-200 bg-white p-5">
             <div className="mb-2 flex items-center gap-2 text-[#755fe3]">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden
-              >
-                <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-              </svg>
+              <Star className="w-5 h-5" aria-hidden />
               <h3 className="text-base font-semibold text-zinc-900">
                 Qualidade nas vagas
               </h3>
@@ -181,21 +143,7 @@ export default function Home() {
 
           <div className="rounded-lg border border-zinc-200 bg-white p-5">
             <div className="mb-2 flex items-center gap-2 text-[#755fe3]">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden
-              >
-                <path
-                  d="M4 4h16v16H4z"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <path d="M8 10h8M8 14h6" />
-              </svg>
+              <FileText className="w-5 h-5" aria-hidden />
               <h3 className="text-base font-semibold text-zinc-900">
                 Currículo inclusivo
               </h3>
@@ -207,16 +155,7 @@ export default function Home() {
 
           <div className="rounded-lg border border-zinc-200 bg-white p-5">
             <div className="mb-2 flex items-center gap-2 text-[#755fe3]">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5l7 7-7 7" />
-              </svg>
+              <ArrowRight className="w-5 h-5" aria-hidden />
               <h3 className="text-base font-semibold text-zinc-900">
                 Comece hoje
               </h3>

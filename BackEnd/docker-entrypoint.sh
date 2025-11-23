@@ -8,11 +8,22 @@ done
 
 echo "✅ PostgreSQL está pronto!"
 
+echo "📦 Instalando dependências..."
+npm install
+
+echo "🧩 Gerando Prisma Client..."
+npx prisma generate
+
 echo "🔄 Rodando migrations..."
 npx prisma migrate deploy
 
-echo "🔄 Rodando seed..."
-npx tsx prisma/seed.ts || true
+if [ ! -f "/app/.seeded" ]; then
+  echo "🌱 Rodando seed (primeira execução)..."
+  npx prisma db seed || npx tsx prisma/seed.ts || true
+  touch /app/.seeded
+else
+  echo "⏭️  Seed já executado anteriormente. Pulando."
+fi
 
 echo "🚀 Iniciando servidor..."
 exec "$@"

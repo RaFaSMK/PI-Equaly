@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getAuth } from "../lib/auth";
 
@@ -16,17 +16,30 @@ export default function RequireAuth({
   redirectTo = "/login",
 }: Props) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const auth = getAuth();
 
   const ok = Boolean(auth?.token) && (!role || auth?.usuario?.tipo === role);
 
   useEffect(() => {
-    if (!ok) router.push(redirectTo);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !ok) {
+      router.push(redirectTo);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ok]);
+  }, [mounted, ok]);
+
+  if (!mounted) {
+    // Renderiza um placeholder estável no SSR e na primeira pintura do cliente
+    return <div aria-hidden />;
+  }
 
   if (!ok) {
-    return <p className="text-zinc-700">Redirecionando para login...</p>;
+    // Após montar, exibe um feedback mínimo enquanto redireciona
+    return <p className="text-zinc-700">Redirecionando...</p>;
   }
   return <>{children}</>;
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { getAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api";
 import { useToast } from "./Toaster";
+import { X } from "lucide-react";
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -116,19 +117,7 @@ export default function EditProfileModal({
             className="text-zinc-400 hover:text-zinc-600 transition-colors"
             aria-label="Fechar"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <X className="w-6 h-6" aria-hidden />
           </button>
         </div>
 
