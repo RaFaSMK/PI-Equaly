@@ -297,13 +297,16 @@ export default function PainelEmpresaPage() {
                 className="rounded-lg border border-zinc-200 bg-white p-4"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <Link
-                    href={`/empresa/vagas/${v.id}`}
-                    className="font-medium text-zinc-900 hover:underline break-words"
-                  >
+                  <div className="font-medium text-zinc-900 break-words">
                     {v.titulo}
-                  </Link>
+                  </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    <Link
+                      href={`/empresa/vagas/${v.id}`}
+                      className="rounded-md bg-[#755fe3] px-3 py-1.5 text-sm text-white hover:opacity-95 font-medium"
+                    >
+                      Candidatos
+                    </Link>
                     <button
                       onClick={() => iniciarEdicao(v)}
                       className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-50 font-medium"

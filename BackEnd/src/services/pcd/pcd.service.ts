@@ -125,7 +125,7 @@ const PcdService = {
     return PcdRepository.findByUsuarioId(usuarioId);
   },
 
-  async atualizarCurriculo(id: number, url: string) {
+  async atualizarCurriculo(id: number, url: string | null) {
     return PcdRepository.update(id, { curriculoUrl: url });
   },
 

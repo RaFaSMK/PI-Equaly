@@ -41,7 +41,7 @@ export const PcdRepository = {
       where: { id },
       include: {
         endereco: true,
-        subtipoPcd: { include: { subtipo: true } },
+        subtipoPcd: { include: { subtipo: { include: { tipo: true } } } },
         barreirasPcd: { include: { barreira: true } },
         candidaturas: true,
       },

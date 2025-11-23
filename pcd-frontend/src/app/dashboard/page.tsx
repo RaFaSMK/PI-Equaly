@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { apiFetch } from "../../lib/api";
+import { apiFetch, API_BASE_URL } from "../../lib/api";
+import { FileText, Trash2, Upload } from "lucide-react";
 import { getAuth, setPcdId } from "../../lib/auth";
 import RequireAuth from "../../components/RequireAuth";
 import { useToast } from "../../components/Toaster";
@@ -29,6 +30,7 @@ export default function DashboardPage() {
   const [pcdId, setPcdIdState] = useState<number | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [curriculoUrl, setCurriculoUrl] = useState<string | null>(null);
   const [barreiras, setBarreiras] = useState<Barreira[]>([]);
   const [minhasBarreiras, setMinhasBarreiras] = useState<number[]>([]);
   const [loadingBarreiras, setLoadingBarreiras] = useState(false);
@@ -107,6 +109,16 @@ export default function DashboardPage() {
       } catch {
         // silencioso
       }
+
+      // Carregar currículo atual
+      try {
+        const cur = await apiFetch<{ curriculoUrl: string }>("/pcd/curriculo", {
+          authToken: token,
+        });
+        setCurriculoUrl(cur.curriculoUrl);
+      } catch {
+        setCurriculoUrl(null);
+      }
     })();
   }, [token, pcdId]);
 
@@ -153,21 +165,47 @@ export default function DashboardPage() {
   );
 
   async function uploadCurriculo() {
-    if (!token || !pcdId || !file) return;
+    if (!token || !file) return;
     try {
       setUploading(true);
       const fd = new FormData();
       fd.append("curriculo", file);
-      await apiFetch(`/pcd/${pcdId}/curriculo`, {
+      await apiFetch("/pcd/curriculo", {
         method: "POST",
         body: fd,
         authToken: token,
       });
+      // Atualiza a URL atual
+      try {
+        const cur = await apiFetch<{ curriculoUrl: string }>("/pcd/curriculo", {
+          authToken: token,
+        });
+        setCurriculoUrl(cur.curriculoUrl);
+      } catch {}
+      setFile(null); // Limpa o input de arquivo
       show("Currículo enviado com sucesso!", "success");
     } catch (err) {
       show(err instanceof Error ? err.message : "Erro no upload", "error");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function deletarCurriculo() {
+    if (!token) return;
+    try {
+      await apiFetch(`/pcd/curriculo`, {
+        method: "DELETE",
+        authToken: token,
+      });
+      setCurriculoUrl(null);
+      setFile(null); // Limpa o input de arquivo
+      show("Currículo removido", "success");
+    } catch (err) {
+      show(
+        err instanceof Error ? err.message : "Erro ao remover currículo",
+        "error"
+      );
     }
   }
 
@@ -429,28 +467,62 @@ export default function DashboardPage() {
 
         <section>
           <h2 className="mb-2 text-lg font-semibold text-zinc-900">
-            Upload de Currículo (PDF)
+            Currículo (PDF)
           </h2>
-          {!pcdId && (
-            <p className="mb-2 text-sm text-zinc-600">
-              Seu ID PCD será identificado automaticamente após a primeira
-              candidatura ou cadastro.
+          <div className="rounded-lg border border-zinc-200 bg-white p-4 space-y-3">
+            {curriculoUrl ? (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-sm text-zinc-800">
+                  <FileText className="w-4 h-4 text-zinc-700" aria-hidden />
+                  <span>Um currículo está salvo na sua conta.</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`${API_BASE_URL}${curriculoUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-md border border-zinc-300 px-3 py-1.5 text-sm text-zinc-800 hover:bg-zinc-50"
+                  >
+                    Abrir PDF
+                  </a>
+                  <button
+                    onClick={deletarCurriculo}
+                    className="inline-flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-sm text-white hover:opacity-95"
+                  >
+                    <Trash2 className="w-4 h-4" aria-hidden />
+                    Remover
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-zinc-600">
+                Nenhum currículo enviado ainda.
+              </p>
+            )}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <input
+                key={file ? "with-file" : "no-file"}
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                className="w-full rounded-md border border-zinc-300 p-2 text-sm"
+              />
+              <button
+                disabled={!file || uploading}
+                onClick={uploadCurriculo}
+                className="inline-flex items-center gap-1.5 rounded-md bg-[#755fe3] px-4 py-2 text-white hover:opacity-95 disabled:opacity-60"
+              >
+                <Upload className="w-4 h-4" aria-hidden />
+                {uploading
+                  ? "Enviando..."
+                  : curriculoUrl
+                  ? "Substituir"
+                  : "Enviar"}
+              </button>
+            </div>
+            <p className="text-xs text-zinc-500">
+              Tamanho máximo: 5MB. Formato: PDF.
             </p>
-          )}
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <input
-              type="file"
-              accept="application/pdf"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              className="w-full rounded-md border border-zinc-300 p-2 text-sm"
-            />
-            <button
-              disabled={!file || !pcdId || uploading}
-              onClick={uploadCurriculo}
-              className="rounded-md bg-[#755fe3] px-4 py-2 text-white hover:opacity-95 disabled:opacity-60"
-            >
-              {uploading ? "Enviando..." : "Enviar"}
-            </button>
           </div>
         </section>
       </div>

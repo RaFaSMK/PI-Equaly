@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { apiFetch } from "../../../../lib/api";
+import { apiFetch, API_BASE_URL } from "../../../../lib/api";
 import { getAuth } from "../../../../lib/auth";
 import { useToast } from "../../../../components/Toaster";
 
@@ -11,6 +11,7 @@ type Barreira = { id: number; nome: string };
 type Deficiencia = {
   id: number;
   nome: string;
+  tipo?: string;
   subtipos?: Array<{ id: number; nome: string }>;
 };
 
@@ -20,6 +21,7 @@ type Pcd = {
   email: string;
   telefone?: string;
   escolaridade?: string;
+  curriculoUrl?: string | null;
   deficiencias?: Deficiencia[];
   barreirasPcd?: Array<{ barreira: Barreira }>;
 };
@@ -33,7 +35,8 @@ type Candidatura = {
 export default function CandidaturasVagaPage() {
   const { id } = useParams<{ id: string }>();
   const vagaId = Number(id);
-  const auth = getAuth();
+  const [mounted, setMounted] = useState(false);
+  const [auth, setAuth] = useState<ReturnType<typeof getAuth> | null>(null);
   const token = auth?.token;
 
   const [list, setList] = useState<Candidatura[]>([]);
@@ -42,6 +45,11 @@ export default function CandidaturasVagaPage() {
   const [expandedPcdId, setExpandedPcdId] = useState<number | null>(null);
   const [pcdDetails, setPcdDetails] = useState<Record<number, Pcd>>({});
   const { show } = useToast();
+
+  useEffect(() => {
+    setMounted(true);
+    setAuth(getAuth());
+  }, []);
 
   async function carregar() {
     if (!token) return;
@@ -114,6 +122,7 @@ export default function CandidaturasVagaPage() {
     }
   }
 
+  if (!mounted) return null;
   if (!token) return <p className="">Faça login para ver as candidaturas.</p>;
   if (loading) return <p className="">Carregando...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
@@ -153,6 +162,16 @@ export default function CandidaturasVagaPage() {
                   >
                     {c.status}
                   </span>
+                  {c.pcd?.curriculoUrl && (
+                    <a
+                      href={`${API_BASE_URL}${c.pcd.curriculoUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-md border border-zinc-300 px-2.5 py-1 text-zinc-800 hover:bg-zinc-50"
+                    >
+                      Currículo (PDF)
+                    </a>
+                  )}
                   {c.status === "ENVIADA" && (
                     <>
                       <button
@@ -221,7 +240,7 @@ export default function CandidaturasVagaPage() {
                             key={def.id}
                             className="rounded bg-blue-100 text-blue-800 px-2 py-1 text-xs"
                           >
-                            {def.nome}
+                            {def.tipo ? `${def.tipo}: ${def.nome}` : def.nome}
                           </span>
                         ))}
                       </div>
