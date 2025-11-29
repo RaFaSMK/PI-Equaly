@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiFetch, API_BASE_URL } from "../../../../lib/api";
 import { getAuth } from "../../../../lib/auth";
 import { useToast } from "../../../../components/Toaster";
@@ -51,7 +51,7 @@ export default function CandidaturasVagaPage() {
     setAuth(getAuth());
   }, []);
 
-  async function carregar() {
+  const carregar = useCallback(async () => {
     if (!token) return;
     try {
       const data = await apiFetch<Candidatura[]>(
@@ -66,11 +66,32 @@ export default function CandidaturasVagaPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [token, vagaId]);
 
   useEffect(() => {
     carregar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [carregar]);
+
+  useEffect(() => {
+    if (!token) return;
+
+    async function buscar() {
+      try {
+        const data = await apiFetch<Candidatura[]>(
+          `/candidaturas/vaga/${vagaId}`,
+          { authToken: token }
+        );
+        setList(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Erro ao carregar candidaturas"
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    buscar();
   }, [token, vagaId]);
 
   async function setStatus(
@@ -248,39 +269,38 @@ export default function CandidaturasVagaPage() {
                   )}
 
                   {/* Barreiras de Acessibilidade */}
-                  {details.barreirasPcd && details.barreirasPcd.length > 0 && (
+                  {details.barreirasPcd && (
                     <div>
                       <p className="text-xs font-medium text-zinc-600 mb-2">
                         Barreiras de Acessibilidade
                       </p>
-                      <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
-                        <p className="text-xs text-amber-800 mb-2">
-                          Este candidato enfrenta as seguintes barreiras:
-                        </p>
-                        <ul className="space-y-1">
-                          {details.barreirasPcd.map((b, idx) => (
-                            <li
-                              key={idx}
-                              className="text-sm text-amber-900 flex items-start gap-2"
-                            >
-                              <span className="text-amber-600">•</span>
-                              <span>{b.barreira.nome}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      {details.barreirasPcd.length > 0 ? (
+                        <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+                          <p className="text-xs text-amber-800 mb-2">
+                            Este candidato enfrenta as seguintes barreiras:
+                          </p>
+                          <ul className="space-y-1">
+                            {details.barreirasPcd.map((b, idx) => (
+                              <li
+                                key={idx}
+                                className="text-sm text-amber-900 flex items-start gap-2"
+                              >
+                                <span className="text-amber-600">•</span>
+                                <span>{b.barreira.nome}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : (
+                        <div className="bg-green-50 border border-green-200 rounded-md p-3">
+                          <p className="text-xs text-green-800">
+                            ✓ Este candidato não possui barreiras de
+                            acessibilidade cadastradas.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
-
-                  {details.barreirasPcd &&
-                    details.barreirasPcd.length === 0 && (
-                      <div className="bg-green-50 border border-green-200 rounded-md p-3">
-                        <p className="text-xs text-green-800">
-                          ✓ Este candidato não possui barreiras de
-                          acessibilidade cadastradas.
-                        </p>
-                      </div>
-                    )}
                 </div>
               )}
             </div>

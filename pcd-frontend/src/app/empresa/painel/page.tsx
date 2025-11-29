@@ -33,6 +33,8 @@ export default function PainelEmpresaPage() {
   const [empresa, setEmpresa] = useState<Empresa | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState<string | null>(null);
+
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [escolaridade, setEscolaridade] = useState("");
@@ -85,9 +87,9 @@ export default function PainelEmpresaPage() {
   }
 
   function formatFaixaMasked(input: string) {
-    // Suporta formatos: "2000" -> "R$ 2.000,00"; "2000 - 3500" -> "R$ 2.000,00 - R$ 3.500,00"
-    if (!input) return "";
-    const parts = input.split("-");
+    const sanitized = sanitizeFaixa(input);
+    if (!sanitized) return "";
+    const parts = sanitized.split("-");
     const formatted = parts
       .map((p) => formatBRLFromDigits(p.trim()))
       .filter((p) => p && p.length > 0)
@@ -225,6 +227,15 @@ export default function PainelEmpresaPage() {
   async function salvarEdicao(e: React.FormEvent) {
     e.preventDefault();
     if (!editingId || !empresa) return;
+
+    if (!editEscolaridade) {
+      show("Informe a escolaridade da vaga.", "error");
+      return;
+    }
+    if (editAcessibilidadesSelecionadas.length === 0) {
+      show("Selecione ao menos uma acessibilidade oferecida.", "error");
+      return;
+    }
     try {
       await apiFetch(`/vagas/${editingId}`, {
         method: "PUT",
@@ -296,7 +307,7 @@ export default function PainelEmpresaPage() {
                 className="rounded-lg border border-zinc-200 bg-white p-4"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div className="font-medium text-zinc-900 wrap-break-word">
+                  <div className="font-medium text-zinc-900 break-words">
                     {v.titulo}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
