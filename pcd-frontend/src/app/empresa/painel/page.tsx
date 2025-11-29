@@ -23,6 +23,51 @@ type Empresa = {
   }[];
 };
 
+// ===== FORMATAÇÃO DE FAIXA SALARIAL =====
+function formatSalaryRange(input: string): string {
+  // Remove tudo exceto números e hífen
+  const cleaned = input.replace(/[^\d-]/g, "");
+  const firstHyphen = cleaned.indexOf("-");
+  const hasHyphen = firstHyphen !== -1;
+
+  if (!hasHyphen) {
+    const numbers = cleaned.replace(/\D/g, "");
+    if (!numbers) return "";
+    const value = parseInt(numbers, 10);
+    if (isNaN(value) || value === 0) return "";
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+    }).format(value / 100);
+  }
+
+  const beforeHyphen = cleaned.substring(0, firstHyphen);
+  const afterHyphen = cleaned.substring(firstHyphen + 1);
+  const minNumbers = beforeHyphen.replace(/\D/g, "");
+  const maxNumbers = afterHyphen.replace(/\D/g, "");
+
+  if (!minNumbers) return "";
+  const minValue = parseInt(minNumbers, 10);
+  if (isNaN(minValue) || minValue === 0) return "";
+
+  const formatter = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+  });
+
+  const minFormatted = formatter.format(minValue / 100);
+
+  if (!maxNumbers) return `${minFormatted} - `;
+
+  const maxValue = parseInt(maxNumbers, 10);
+  if (isNaN(maxValue) || maxValue === 0) return `${minFormatted} - `;
+
+  const maxFormatted = formatter.format(maxValue / 100);
+  return `${minFormatted} - ${maxFormatted}`;
+}
+
 export default function PainelEmpresaPage() {
   const [mounted, setMounted] = useState(false);
   const [auth] = useState(() => getAuth());
@@ -32,7 +77,6 @@ export default function PainelEmpresaPage() {
 
   const [empresa, setEmpresa] = useState<Empresa | null>(null);
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState<string | null>(null);
 
   const [titulo, setTitulo] = useState("");
@@ -67,35 +111,6 @@ export default function PainelEmpresaPage() {
   const [editSubtiposSelecionados, setEditSubtiposSelecionados] = useState<
     number[]
   >([]);
-
-  // Permite apenas caracteres válidos para faixa salarial (R$, números, espaço, ponto, vírgula e hífen)
-  function sanitizeFaixa(v: string) {
-    return v.replace(/[^0-9R$.,\-\s]/g, "");
-  }
-
-  // Formata a faixa salarial para BRL com suporte a intervalo usando '-'
-  function formatBRLFromDigits(value: string) {
-    const digits = value.replace(/\D/g, "");
-    if (!digits) return "";
-    const n = parseInt(digits, 10);
-    if (Number.isNaN(n)) return "";
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 2,
-    }).format(n);
-  }
-
-  function formatFaixaMasked(input: string) {
-    const sanitized = sanitizeFaixa(input);
-    if (!sanitized) return "";
-    const parts = sanitized.split("-");
-    const formatted = parts
-      .map((p) => formatBRLFromDigits(p.trim()))
-      .filter((p) => p && p.length > 0)
-      .join(" - ");
-    return formatted;
-  }
 
   useEffect(() => {
     setMounted(true);
@@ -139,7 +154,6 @@ export default function PainelEmpresaPage() {
           }>("/tipos"),
         ]);
         setAcessibilidades(acessRes.data);
-        // Normaliza evitando undefined em subtipos
         setTipos(
           tiposRes.data.map((t) => ({
             ...t,
@@ -157,7 +171,6 @@ export default function PainelEmpresaPage() {
     e.preventDefault();
     if (!empresa) return;
     try {
-      // Validações obrigatórias
       if (!escolaridade) {
         show("Informe a escolaridade da vaga.", "error");
         return;
@@ -182,7 +195,6 @@ export default function PainelEmpresaPage() {
         }),
         authToken: token,
       });
-      // refresh simples
       const detalhe = await apiFetch<Empresa>(`/empresas/${empresa.id}`);
       setEmpresa(detalhe);
       setTitulo("");
@@ -279,7 +291,6 @@ export default function PainelEmpresaPage() {
     }
   }
 
-  // Evita mismatch de hidratação entre SSR e cliente
   if (!mounted) return <p>Carregando...</p>;
   if (!auth || auth.usuario.tipo !== "EMPRESA") {
     return <p>Faça login como Empresa para acessar o painel.</p>;
@@ -374,13 +385,12 @@ export default function PainelEmpresaPage() {
                     </select>
                     <input
                       className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
-                      placeholder="Ex: R$ 2.000,00 - R$ 3.500,00"
-                      inputMode="numeric"
-                      pattern="[0-9R$.,\-\s]*"
+                      placeholder="Ex: 2000 - 3500"
                       value={editFaixaSalarial}
                       onChange={(e) =>
-                        setEditFaixaSalarial(formatFaixaMasked(e.target.value))
+                        setEditFaixaSalarial(formatSalaryRange(e.target.value))
                       }
+                      inputMode="numeric"
                     />
                     <select
                       className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm bg-white"
@@ -577,12 +587,11 @@ export default function PainelEmpresaPage() {
                 </label>
                 <input
                   className="mt-1 w-full rounded-md border border-zinc-300 px-3 py-2 text-sm"
-                  placeholder="Ex: R$ 2.000,00 - R$ 3.500,00"
+                  placeholder="Ex: 2000 - 3500"
                   inputMode="numeric"
-                  pattern="[0-9R$.,\-\s]*"
                   value={faixaSalarial}
                   onChange={(e) =>
-                    setFaixaSalarial(formatFaixaMasked(e.target.value))
+                    setFaixaSalarial(formatSalaryRange(e.target.value))
                   }
                 />
               </div>
