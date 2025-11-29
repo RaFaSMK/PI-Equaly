@@ -25,46 +25,38 @@ type Empresa = {
 
 // ===== FORMATAÇÃO DE FAIXA SALARIAL =====
 function formatSalaryRange(input: string): string {
-  // Remove tudo exceto números e hífen
   const cleaned = input.replace(/[^\d-]/g, "");
-  const firstHyphen = cleaned.indexOf("-");
-  const hasHyphen = firstHyphen !== -1;
 
-  if (!hasHyphen) {
-    const numbers = cleaned.replace(/\D/g, "");
+  const parts = cleaned.split("-");
+
+  const formatValue = (valStr: string) => {
+    const numbers = valStr.replace(/\D/g, "");
+
     if (!numbers) return "";
+
     const value = parseInt(numbers, 10);
+
     if (isNaN(value) || value === 0) return "";
+
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
       minimumFractionDigits: 2,
     }).format(value / 100);
+  };
+
+  if (parts.length === 1) {
+    return formatValue(parts[0]);
   }
 
-  const beforeHyphen = cleaned.substring(0, firstHyphen);
-  const afterHyphen = cleaned.substring(firstHyphen + 1);
-  const minNumbers = beforeHyphen.replace(/\D/g, "");
-  const maxNumbers = afterHyphen.replace(/\D/g, "");
+  const minFormatted = formatValue(parts[0]);
 
-  if (!minNumbers) return "";
-  const minValue = parseInt(minNumbers, 10);
-  if (isNaN(minValue) || minValue === 0) return "";
+  if (parts.length > 1 && !parts[1]) {
+    return `${minFormatted} - `;
+  }
 
-  const formatter = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-    minimumFractionDigits: 2,
-  });
+  const maxFormatted = formatValue(parts[1]);
 
-  const minFormatted = formatter.format(minValue / 100);
-
-  if (!maxNumbers) return `${minFormatted} - `;
-
-  const maxValue = parseInt(maxNumbers, 10);
-  if (isNaN(maxValue) || maxValue === 0) return `${minFormatted} - `;
-
-  const maxFormatted = formatter.format(maxValue / 100);
   return `${minFormatted} - ${maxFormatted}`;
 }
 
