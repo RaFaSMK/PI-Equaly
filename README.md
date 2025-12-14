@@ -1,182 +1,191 @@
-# PCD Workspace - Docker Setup
+# 🤝 Equaly - Plataforma de Inclusão Digital para PCD
 
-Este projeto foi dockerizado para facilitar o desenvolvimento e deployment.
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-## 📦 Estrutura
+## 📋 Sobre o Projeto
+
+**Equaly** é uma plataforma inovadora desenvolvida para conectar **Pessoas com Deficiência (PCD)** com oportunidades de emprego, eliminando barreiras de acessibilidade e promovendo inclusão genuína no mercado de trabalho.
+
+O projeto vai muito além de um simples portal de vagas: implementa recursos avançados de **acessibilidade**, permite que empresas mapeiem e identifiquem barreiras no ambiente de trabalho, e oferece um espaço seguro e preparado para que PCDs possam desenvolver sua carreira profissional.
+
+### 🎯 Missão
+
+Transformar o acesso ao mercado de trabalho para pessoas com deficiência, criando uma ponte entre talentos e oportunidades inclusivas.
+
+### ✨ Diferenciais
+
+- 🔍 **Mapeamento de Barreiras**: Empresas identificam e documentam limitações de acessibilidade
+- ♿ **Acessibilidade em Primeiro Lugar**: Interface totalmente acessível com barra de ferramentas inclusiva
+- 📄 **Gestão de Candidaturas**: Sistema completo de aplicação e acompanhamento de vagas
+- 🏢 **Perfil Empresarial**: Empresas mostram seu compromisso com inclusão
+- 👤 **Perfil do PCD**: Destaque de competências, experiências e necessidades de acessibilidade
+- 📤 **Upload de Currículos**: Armazenamento seguro e organizado de documentos
+
+---
+
+## 🏗️ Arquitetura
 
 ```
-pcd-workspace/
-├── BackEnd/                 # API Node.js + Express + Prisma
-├── pcd-frontend/            # Frontend Next.js
-├── docker-compose.yml       # Produção
-└── docker-compose.dev.yml   # Desenvolvimento
+Equaly/
+├── BackEnd/              # API REST com Node.js + Express + Prisma
+├── pcd-frontend/         # Interface com Next.js + React + Tailwind CSS
+├── docker-compose.yml    # Configuração de produção
+└── docker-compose.dev.yml # Ambiente de desenvolvimento
 ```
 
-## 🚀 Iniciar o Projeto
+### Stack Tecnológico
 
-### Modo Desenvolvimento (Recomendado)
+#### 🔧 Backend
 
-Com **hot reload** para backend e frontend:
+- **Node.js 20** - Runtime JavaScript escalável
+- **Express 5** - Framework web minimalista
+- **Prisma 6** - ORM type-safe para TypeScript
+- **PostgreSQL 16** - Banco de dados robusto
+- **JWT** - Autenticação segura
+
+#### 💻 Frontend
+
+- **Next.js 16** - Framework React com SSR
+- **React 19** - UI library moderna
+- **Tailwind CSS** - Estilização utilitária
+- **TypeScript** - Tipagem estática
+
+#### 🐳 DevOps
+
+- **Docker** - Containerização
+- **Docker Compose** - Orquestração local
+
+---
+
+## 🚀 Como Começar
+
+### 📋 Pré-requisitos
+
+- Docker e Docker Compose instalados
+- Git
+
+### 🏃 Quickstart
 
 ```bash
-# Subir todos os containers
-docker-compose -f docker-compose.dev.yml up
+# Clone o repositório
+git clone https://github.com/RaFaSMK/PI-Equaly.git
+cd PI-Equaly
 
-# Ou em background
+# Modo Desenvolvimento (com hot reload)
 docker-compose -f docker-compose.dev.yml up -d
 
-# Ver logs
-docker-compose -f docker-compose.dev.yml logs -f
+# Modo Produção
+docker-compose up -d --build
 ```
 
-Acessar:
+Acessar a aplicação:
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:3333/api
-- **PostgreSQL**: localhost:5432
+- 🌐 **Frontend**: http://localhost:3000
+- 🔌 **Backend API**: http://localhost:3333/api
+- 🗄️ **Database**: localhost:5432
 
-### Modo Produção
-
-Build otimizado:
+### 📚 Documentação de Desenvolvimento
 
 ```bash
-docker-compose up --build
-```
+# Ver status dos containers
+docker-compose ps
 
-## 🛠️ Comandos Úteis
-
-### Ver status dos containers
-
-```bash
-docker-compose -f docker-compose.dev.yml ps
-```
-
-### Parar tudo
-
-```bash
-docker-compose -f docker-compose.dev.yml down
-```
-
-### Parar e remover volumes (limpar banco de dados)
-
-```bash
-docker-compose -f docker-compose.dev.yml down -v
-```
-
-### Acessar shell do backend
-
-```bash
+# Acessar shell do backend
 docker exec -it pcd-backend-dev sh
-```
 
-### Rodar migrations manualmente
-
-```bash
+# Executar migrations
 docker exec -it pcd-backend-dev npx prisma migrate dev
+
+# Ver logs em tempo real
+docker-compose logs -f backend
+docker-compose logs -f frontend
 ```
 
-### Ver logs de um serviço específico
+---
 
-```bash
-docker-compose -f docker-compose.dev.yml logs -f backend
-docker-compose -f docker-compose.dev.yml logs -f frontend
-docker-compose -f docker-compose.dev.yml logs -f postgres
-```
+## 📊 Módulos Principais
 
-## 🗄️ Banco de Dados
+### 🔐 Autenticação
 
-O PostgreSQL roda em um container separado com:
+- Login e registro de usuários
+- Autenticação com JWT
+- Diferenciação de perfis (PCD, Empresa, Admin)
 
-- **Usuário**: postgres
-- **Senha**: postgres
-- **Database**: pcd_database
-- **Porta**: 5432
+### 👤 Perfil PCD
 
-### Conectar via cliente externo (DBeaver, pgAdmin, etc.)
+- Gerenciamento de informações pessoais
+- Upload de foto e currículo
+- Documentação de necessidades de acessibilidade
+- Histórico de candidaturas
 
-```
-Host: localhost
-Port: 5432
-Database: pcd_database
-User: postgres
-Password: postgres
-```
+### 🏢 Perfil Empresa
 
-## 🔧 Variáveis de Ambiente
+- Cadastro e validação com CNPJ
+- Publicação de vagas com detalhes de acessibilidade
+- Identificação de barreiras arquitetônicas
+- Gerenciamento de candidatos
 
-### Backend (.env.docker)
+### 💼 Gestão de Vagas
 
-```env
-DATABASE_URL="postgresql://postgres:postgres@postgres:5432/pcd_database?schema=public"
-JWT_SECRET="dev-secret-key-change-in-production"
-PORT=3333
-```
+- Criação de oportunidades inclusivas
+- Detalhe de requisitos e acessibilidades oferecidas
+- Sistema de candidatura integrado
+- Acompanhamento de candidatos
 
-### Frontend (.env.local)
+### ♿ Recursos de Acessibilidade
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3333/api
-```
+- Tipos de deficiências categorizadas
+- Barreiras de acessibilidade mapeadas
+- Acessibilidades disponíveis documentadas
+- Barra de acessibilidade na interface (contraste, zoom, etc.)
 
-## 📝 Migrations e Seed
+---
 
-No primeiro start, o backend automaticamente:
+## 💾 Banco de Dados
 
-1. ✅ Aguarda o PostgreSQL ficar pronto
-2. ✅ Roda as migrations (`prisma migrate deploy`)
-3. ✅ Executa o seed (`tsx prisma/seed.ts`)
+Estrutura bem definida com Prisma para:
 
-Para rodar novamente:
+- Usuários e autenticação
+- Empresas e vagas
+- Candidaturas e histórico
+- Barreiras e acessibilidades
+- Upload de arquivos
 
-```bash
-docker exec -it pcd-backend-dev npx prisma migrate dev --name nome_da_migration
-docker exec -it pcd-backend-dev npx tsx prisma/seed.ts
-```
+---
 
-## 🧹 Limpeza
+## 🤝 Como Contribuir
 
-### Remover containers, networks e volumes
+Contribuições são bem-vindas! Para começar:
 
-```bash
-docker-compose -f docker-compose.dev.yml down -v --remove-orphans
-```
+1. Fork o repositório
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
-### Limpar tudo (incluindo imagens)
+---
 
-```bash
-docker-compose -f docker-compose.dev.yml down -v --rmi all
-```
+## 📄 Licença
 
-## 🐛 Troubleshooting
+Este projeto está sob a licença MIT - veja detalhes na documentação.
 
-### Backend não conecta ao PostgreSQL
+---
 
-```bash
-# Verificar se o postgres está healthy
-docker-compose -f docker-compose.dev.yml ps
+## 🙌 Agradecimentos
 
-# Ver logs do postgres
-docker-compose -f docker-compose.dev.yml logs postgres
-```
+Desenvolvido com ❤️ para promover inclusão digital e igualdade de oportunidades.
 
-### Erro de permissão no entrypoint
+Acredita na importância de tecnologia acessível? Conecte-se comigo no LinkedIn e vamos transformar vidas juntos!
 
-```bash
-# Dar permissão de execução
-chmod +x BackEnd/docker-entrypoint.sh
-```
+---
 
-### Rebuild completo
+## 📞 Contato
 
-```bash
-docker-compose -f docker-compose.dev.yml down -v
-docker-compose -f docker-compose.dev.yml build --no-cache
-docker-compose -f docker-compose.dev.yml up
-```
+- 💼 [LinkedIn](https://linkedin.com)
+- 🐙 [GitHub](https://github.com/RaFaSMK/PI-Equaly)
+- 📧 Entre em contato para parcerias e dúvidas
 
-## 📚 Tecnologias
+---
 
-- **Backend**: Node.js 20, Express 5, Prisma 6, TypeScript
-- **Frontend**: Next.js 16, React 19, Tailwind CSS
-- **Database**: PostgreSQL 16
-- **Containerização**: Docker & Docker Compose
+**Equaly**: Porque inclusão não é opcional, é fundamental.

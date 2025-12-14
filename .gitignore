@@ -19,3 +19,5 @@ logs
 
 # Database volumes
 postgres_data
+
+LINKEDIN_GUIDE.md
